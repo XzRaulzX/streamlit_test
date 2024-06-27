@@ -1,62 +1,47 @@
 import streamlit as st
 import matplotlib.pyplot as plt
-import numpy as np
 
 # Configuración de la página
 st.set_page_config(
-    page_title="Seguimiento de Gastos Mensuales",
-    page_icon=":money_with_wings:",
+    page_title="Gráfico de Pastel con Streamlit",
+    page_icon=":chart_with_upwards_trend:",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # Título y subtítulo de la aplicación
-st.title('Seguimiento de Gastos Mensuales')
-st.subheader('Visualiza tu presupuesto y gastos a lo largo del año')
+st.title('Gráfico de Pastel con Streamlit')
+st.subheader('Visualiza la distribución de tres variables numéricas')
 
-# Parámetros de entrada
-st.sidebar.header('Ajustes del Presupuesto')
-presupuesto_mensual = st.sidebar.number_input('Presupuesto Mensual (USD)', min_value=100, max_value=10000, value=2000, step=100)
+# Parámetros de entrada para los datos
+st.sidebar.header('Ingreso de Datos')
+nombre_variable1 = st.sidebar.text_input('Nombre de la Variable 1', value='Empresa 1')
+nombre_variable2 = st.sidebar.text_input('Nombre de la Variable 2', value='Empresa 2')
+nombre_variable3 = st.sidebar.text_input('Nombre de la Variable 3', value='Empresa 3')
 
-# Parámetros de entrada para gastos
-st.sidebar.header('Gastos Mensuales')
-gasto_alimentos = st.sidebar.number_input('Gasto en Alimentos (USD)', min_value=0, max_value=5000, value=500, step=50)
-gasto_vivienda = st.sidebar.number_input('Gasto en Vivienda (USD)', min_value=0, max_value=5000, value=800, step=50)
-gasto_transporte = st.sidebar.number_input('Gasto en Transporte (USD)', min_value=0, max_value=2000, value=200, step=50)
-gasto_entretenimiento = st.sidebar.number_input('Gasto en Entretenimiento (USD)', min_value=0, max_value=2000, value=100, step=50)
-gasto_otros = st.sidebar.number_input('Otros Gastos (USD)', min_value=0, max_value=2000, value=200, step=50)
+variable1 = st.sidebar.number_input(f'{nombre_variable1}', min_value=0.0, step=0.1, format="%.1f", value=10.0)
+variable2 = st.sidebar.number_input(f'{nombre_variable2}', min_value=0.0, step=0.1, format="%.1f", value=20.0)
+variable3 = st.sidebar.number_input(f'{nombre_variable3}', min_value=0.0, step=0.1, format="%.1f", value=30.0)
 
-# Parámetros para los labels
-st.sidebar.header('Ajustes de Labels')
-titulo_grafico = st.sidebar.text_input('Título del Gráfico', 'Gastos Mensuales vs Presupuesto')
-label_x = st.sidebar.text_input('Label del Eje X', 'Meses')
-label_y = st.sidebar.text_input('Label del Eje Y', 'Gastos (USD)')
 
-# Calcular el gasto total por mes
-meses = np.arange(1, 13)
-gastos_totales = gasto_alimentos + gasto_vivienda + gasto_transporte + gasto_entretenimiento + gasto_otros
-gastos_mensuales = np.full(12, gastos_totales)
-presupuesto = np.full(12, presupuesto_mensual)
+# Crear el gráfico de pastel
+labels = [nombre_variable1, nombre_variable2, nombre_variable3]
+sizes = [variable1, variable2, variable3]
+colors = ['#ff9999','#66b3ff','#99ff99']
 
-# Crear el gráfico interactivo
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(meses, gastos_mensuales, label='Gastos Mensuales', color='r', marker='o')
-ax.plot(meses, presupuesto, label='Presupuesto Mensual', color='g', linestyle='--')
-ax.fill_between(meses, gastos_mensuales, presupuesto, where=(gastos_mensuales > presupuesto), color='red', alpha=0.3, interpolate=True, label='Exceso de Gasto')
-ax.fill_between(meses, gastos_mensuales, presupuesto, where=(gastos_mensuales <= presupuesto), color='green', alpha=0.3, interpolate=True, label='Dentro del Presupuesto')
+fig, ax = plt.subplots(figsize=(6, 3))
+ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-ax.set_title(titulo_grafico)
-ax.set_xlabel(label_x)
-ax.set_ylabel(label_y)
-ax.legend()
+# Mostrar el gráfico de pastel
 st.pyplot(fig)
-
+plt.subplots(figsize=(6, 4))
 # Información adicional
 st.markdown('---')
 st.markdown('### Información Adicional')
-st.markdown('Esta aplicación permite calcular y visualizar los gastos mensuales en comparación con el presupuesto definido, ajustando los parámetros de gasto para ver cómo cambia la gráfica en tiempo real.')
+st.markdown('Esta aplicación permite visualizar la distribución de tres variables numéricas ingresadas por el usuario en un gráfico de pastel.')
 
 # Créditos y enlaces
 st.markdown('---')
 st.markdown('#### Acerca del Autor')
-st.markdown('Desarrollado por [Tu Nombre](https://github.com/tu-usuario)')
+st.markdown('Desarrollado por [Raul](https://github.com/XzRaulzX/streamlit_test)')
