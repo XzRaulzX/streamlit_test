@@ -51,5 +51,5 @@ st.write('Has seleccionado:', option)
 # Fin de la aplicación
 st.markdown("""
 ---
-Hecho con Streamlit. [Ver código en GitHub](https://github.com/tu_usuario/tu_repo)
+Hecho con Streamlit. [Ver código en GitHub](https://github.com/XzRaulzX/streamlit_test.git)
 """)
