@@ -2,54 +2,61 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Título de la aplicación
-st.title('Ejemplo de Aplicación Streamlit')
-
-# Descripción de qué es Streamlit
-st.markdown("""
-Streamlit es una biblioteca de Python que facilita la creación de aplicaciones web interactivas para Machine Learning y Data Science.
-Permite a los desarrolladores crear aplicaciones rápidamente con código Python puro.
-""")
-
-# Ejemplo de uso de Streamlit Cloud
-st.markdown("""
-### Streamlit Cloud
-Streamlit Cloud es una plataforma que permite a los desarrolladores desplegar y compartir sus aplicaciones Streamlit en la nube de manera sencilla.
-Permite colaboración, revisión y acceso desde cualquier lugar.
-""")
-
-# Ejemplo de caching y optimización con st.cache_data
-@st.cache_data()
-def fetch_data():
-    # Simulación de carga de datos
-    return {'data': 'Datos cargados'}
-
-data = fetch_data()
-st.write(f"Datos cargados: {data}")
-
-# Ejemplo de integración con otras herramientas (ej. gráfico simple)
-st.markdown("""
-### Integración con otras herramientas
-A continuación, se muestra un gráfico simple creado con Matplotlib.
-""")
-x = np.linspace(0, 10, 100)
-y = np.sin(x)
-plt.plot(x, y)
-st.pyplot()
-
-# Ejemplo de componente personalizado (widget interactivo)
-st.markdown("""
-### Componente Personalizado
-A continuación, se muestra un ejemplo de un componente personalizado (widget interactivo).
-""")
-option = st.selectbox(
-    'Selecciona una opción',
-    ('Opción 1', 'Opción 2', 'Opción 3')
+# Configuración de la página
+st.set_page_config(
+    page_title="Seguimiento de Gastos Mensuales",
+    page_icon=":money_with_wings:",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
-st.write('Has seleccionado:', option)
 
-# Fin de la aplicación
-st.markdown("""
----
-Hecho con Streamlit. [Ver código en GitHub](https://github.com/XzRaulzX/streamlit_test.git)
-""")
+# Título y subtítulo de la aplicación
+st.title('Seguimiento de Gastos Mensuales')
+st.subheader('Visualiza tu presupuesto y gastos a lo largo del año')
+
+# Parámetros de entrada
+st.sidebar.header('Ajustes del Presupuesto')
+presupuesto_mensual = st.sidebar.number_input('Presupuesto Mensual (USD)', min_value=100, max_value=10000, value=2000, step=100)
+
+# Parámetros de entrada para gastos
+st.sidebar.header('Gastos Mensuales')
+gasto_alimentos = st.sidebar.number_input('Gasto en Alimentos (USD)', min_value=0, max_value=5000, value=500, step=50)
+gasto_vivienda = st.sidebar.number_input('Gasto en Vivienda (USD)', min_value=0, max_value=5000, value=800, step=50)
+gasto_transporte = st.sidebar.number_input('Gasto en Transporte (USD)', min_value=0, max_value=2000, value=200, step=50)
+gasto_entretenimiento = st.sidebar.number_input('Gasto en Entretenimiento (USD)', min_value=0, max_value=2000, value=100, step=50)
+gasto_otros = st.sidebar.number_input('Otros Gastos (USD)', min_value=0, max_value=2000, value=200, step=50)
+
+# Parámetros para los labels
+st.sidebar.header('Ajustes de Labels')
+titulo_grafico = st.sidebar.text_input('Título del Gráfico', 'Gastos Mensuales vs Presupuesto')
+label_x = st.sidebar.text_input('Label del Eje X', 'Meses')
+label_y = st.sidebar.text_input('Label del Eje Y', 'Gastos (USD)')
+
+# Calcular el gasto total por mes
+meses = np.arange(1, 13)
+gastos_totales = gasto_alimentos + gasto_vivienda + gasto_transporte + gasto_entretenimiento + gasto_otros
+gastos_mensuales = np.full(12, gastos_totales)
+presupuesto = np.full(12, presupuesto_mensual)
+
+# Crear el gráfico interactivo
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(meses, gastos_mensuales, label='Gastos Mensuales', color='r', marker='o')
+ax.plot(meses, presupuesto, label='Presupuesto Mensual', color='g', linestyle='--')
+ax.fill_between(meses, gastos_mensuales, presupuesto, where=(gastos_mensuales > presupuesto), color='red', alpha=0.3, interpolate=True, label='Exceso de Gasto')
+ax.fill_between(meses, gastos_mensuales, presupuesto, where=(gastos_mensuales <= presupuesto), color='green', alpha=0.3, interpolate=True, label='Dentro del Presupuesto')
+
+ax.set_title(titulo_grafico)
+ax.set_xlabel(label_x)
+ax.set_ylabel(label_y)
+ax.legend()
+st.pyplot(fig)
+
+# Información adicional
+st.markdown('---')
+st.markdown('### Información Adicional')
+st.markdown('Esta aplicación permite calcular y visualizar los gastos mensuales en comparación con el presupuesto definido, ajustando los parámetros de gasto para ver cómo cambia la gráfica en tiempo real.')
+
+# Créditos y enlaces
+st.markdown('---')
+st.markdown('#### Acerca del Autor')
+st.markdown('Desarrollado por [Tu Nombre](https://github.com/tu-usuario)')
